@@ -14,12 +14,12 @@ import { Auth } from "./pages/Auth";
 import { CreateMovie } from "./pages/CreateMovie/CreateMovie";
 import { Dashboard } from "./pages/Dashboard";
 import { MovieDetails } from "./pages/MovieDetails";
+import { MyAccount } from "./pages/MyAccount";
 
 
 function App() {
   const { token } = useAuth()
   const [menuIsVisible, setMenuIsVisible] = useState(false);
-  console.log("token:", token)
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -33,10 +33,10 @@ function App() {
           />
           <Routes>
             <Route path="/" element={<Home />} />
-            {/* <Route
+            <Route
               path="/account"
-              element={user ? <Account /> : <Navigate to="/" />}
-            /> */}
+              element={token ? <MyAccount /> : <Navigate to="/" />}
+            />
             <Route
               path="/login"
               element={!token ? <Auth /> : <Navigate to="/" />}

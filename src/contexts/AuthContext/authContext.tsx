@@ -1,4 +1,5 @@
-import axios, { AxiosError } from 'axios';
+import { API_INSTANCE } from '@/services/api';
+import { AxiosError } from 'axios';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -37,12 +38,9 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
     const [user, setUser] = useState<IUser | null>(null);
     const [token, setToken] = useState(localStorage.getItem('token') || '');
 
-    console.log("user", user)
-    console.log("token", token)
-
     const register = async (userData: IUserRegister) => {
         try {
-            await axios.post("http://localhost:3333/auth/register", {
+            await API_INSTANCE.post("/auth/register", {
                 name: userData.name,
                 email: userData.email,
                 password: userData.password
@@ -56,7 +54,6 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
             toast.success("Conta criada com sucesso")
         } catch (error) {
             if (error instanceof AxiosError && error.response) {
-                console.log(error)
                 toast.error(`${error.response.data.message}`);
             } else {
                 toast.error("Erro ao criar conta");
@@ -66,7 +63,7 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
 
     const login = async (userData: IUserLogin) => {
         try {
-            const res = await axios.post("http://localhost:3333/auth/login", {
+            const res = await API_INSTANCE.post("/auth/login", {
                 email: userData.email,
                 password: userData.password
             });

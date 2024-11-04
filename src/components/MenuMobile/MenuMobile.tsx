@@ -1,7 +1,10 @@
+import profileDefault from '@/assets/images/profileDefault.jpg';
 import { useAuth } from "@/contexts/AuthContext/authContext";
 import { X } from "phosphor-react";
 import { useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import { ModeToggle } from "../ModeToggle/mode-toggle";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface NavbarProps {
   menuIsVisible: boolean;
@@ -12,7 +15,7 @@ export const MenuMobile = ({
   menuIsVisible,
   setMenuIsVisible,
 }: NavbarProps) => {
-  const { token, logout } = useAuth()
+  const { token, logout, user } = useAuth()
 
   useEffect(() => {
     document.body.style.overflowY = menuIsVisible ? "hidden" : "auto";
@@ -32,16 +35,17 @@ export const MenuMobile = ({
         className={`flex flex-col items-center gap-8 transform transition-transform duration-700 ${menuIsVisible ? "scale-100" : "scale-75"
           }`}
       >
-        {/* {user && (
+        {token && (
           <Link to="/account" onClick={() => setMenuIsVisible(false)} className="flex items-center gap-4">
-            <img
-              src={user.photoURL || ""}
-              alt="User Avatar"
-              className="w-20 h-20 rounded-2xl"
-            />
-            <p className="text-2xl font-bold text-white">{user.displayName}</p>
+            <Avatar className="w-[48px] h-[48px]">
+              <AvatarImage src={profileDefault} className="object-cover" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            <p className="text-2xl font-bold text-white">{user?.name}</p>
           </Link>
-        )} */}
+        )}
+
+
         <NavLink
           to="/"
           className="text-3xl text-white"
@@ -89,6 +93,8 @@ export const MenuMobile = ({
           >
             Sair
           </NavLink>}
+
+        <ModeToggle />
       </nav>
     </section>
   );

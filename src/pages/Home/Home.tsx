@@ -21,9 +21,10 @@ export const Home = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const filteredMovies = movies.filter(movie =>
+  const filteredMovies = (movies || []).filter(movie =>
     movie.title.toLowerCase().includes(searchTitle.toLowerCase())
   );
+
 
   return (
     <div>

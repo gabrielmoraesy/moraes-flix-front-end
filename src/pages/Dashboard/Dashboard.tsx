@@ -2,20 +2,20 @@
 import { Fragment, useEffect, useState } from "react";
 
 // Icons
-import { ArrowsInLineVertical, ArrowsOutLineVertical } from "phosphor-react";
-import UseHome from "../Home/Home.hook";
-import { IMovie } from "@/interfaces/IMovie";
-import { Link } from "react-router-dom";
+import { ConfirmModal } from "@/components/Modals/ConfirmModal";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext/authContext";
-import axios from "axios";
-import toast from "react-hot-toast";
+import { IMovie } from "@/interfaces/IMovie";
 import { IReview } from "@/interfaces/IReview";
-import { ConfirmModal } from "@/components/Modals/ConfirmModal";
-import { renderStars } from '@/utils/stars'
+import { API_INSTANCE } from "@/services/api";
+import { renderStars } from '@/utils/stars';
+import { ArrowsInLineVertical, ArrowsOutLineVertical } from "phosphor-react";
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
+import UseHome from "../Home/Home.hook";
 
 export const Dashboard = () => {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const [myMoviesIsOpen, setMyMoviesIsOpen] = useState(true);
   const [myReviewsIsOpen, setMyReviewsIsOpen] = useState(true);
   const [showDeleteMovieModal, setShowDeleteMovieModal] = useState(false);
@@ -29,11 +29,7 @@ export const Dashboard = () => {
     try {
       setMyMovies(prevState => prevState!.filter(movie => movie.id !== movieId))
 
-      await axios.delete(`http://localhost:3333/movies/${movieId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      await API_INSTANCE.delete(`/movies/${movieId}`);
 
       toast.success("Filme deletado com sucesso")
     } catch (error) {
@@ -45,11 +41,7 @@ export const Dashboard = () => {
     try {
       setMyReviews(prevState => prevState!.filter(review => review.id !== reviewId))
 
-      await axios.delete(`http://localhost:3333/reviews/${reviewId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      await API_INSTANCE(`/reviews/${reviewId}`);
 
       toast.success("Avaliação deletada com sucesso")
     } catch (error) {
@@ -77,9 +69,6 @@ export const Dashboard = () => {
     fetchMoviesAndReviews();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
-
-  console.log("myMovies", myMovies)
-  console.log("myReviews", myReviews)
 
   const renderButtonsTable = (table: "myMovies" | "myReviews") => {
     if (table === 'myMovies') {
@@ -116,7 +105,7 @@ export const Dashboard = () => {
   };
 
   return (
-    <div className="pt-8 min-h-screen max-w-7xl mx-auto text-center">
+    <div className="pt-4 sm:pt-8 min-h-screen max-w-7xl mx-auto text-center">
       <h1 className="text-2xl font-bold">Dashboard</h1>
       <h3 className="text-lg font-normal">Gerencie todos os seus projetos</h3>
       <div className="flex justify-between font-bold border-b-2 border-gray-300 w-4/5 mx-auto py-2">
@@ -133,7 +122,7 @@ export const Dashboard = () => {
 
       {myMovies && myMovies.map((movie: IMovie) => (
         <Fragment>
-          <div className={`flex justify-between items-center border-b border-gray-200 w-4/5 mx-auto py-2 ${myMoviesIsOpen ? "flex" : "hidden"}`} key={movie.id}>
+          <div className={`flex flex-col sm:flex-row justify-between items-center border-b border-gray-200 w-4/5 mx-auto py-2 ${myMoviesIsOpen ? "flex" : "hidden"}`} key={movie.id}>
             <p className="text-lg">{movie.title}</p>
             <div className="flex gap-2">
               <Link
@@ -228,9 +217,9 @@ export const Dashboard = () => {
       ))}
 
       {myReviews && myReviews.length === 0 && (
-        <div className={`mt-4 flex flex-col gap-2 items-center bg-gray-200 rounded-lg p-4 w-4/5 mx-auto ${myMoviesIsOpen ? "flex" : "hidden"}`}>
+        <div className={`mt-4 flex flex-col gap-2 items-center bg-gray-200 rounded-lg p-4 w-4/5 mx-auto ${myReviewsIsOpen ? "flex" : "hidden"}`}>
           <p className="text-lg">Você não possui nenhuma avaliação</p>
-          <Link to="/movies/create" className="bg-primaryBlue text-white text-center cursor-pointer rounded-[10px] font-bold border-0 py-[10px] px-[15px] text-base ml-4">
+          <Link to="/" className="bg-primaryBlue text-white text-center cursor-pointer rounded-[10px] font-bold border-0 py-[10px] px-[15px] text-base ml-4">
             Avaliar um filme
           </Link>
         </div>

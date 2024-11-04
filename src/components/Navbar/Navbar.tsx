@@ -1,10 +1,13 @@
-import { List } from "phosphor-react";
-import { NavLink, Link, useNavigate } from "react-router-dom";
-import { ModeToggle } from "../ModeToggle/mode-toggle";
+import profileDefault from '@/assets/images/profileDefault.jpg';
 import { useAuth } from "@/contexts/AuthContext/authContext";
+import { List } from "phosphor-react";
 import { useState } from "react";
-import { ConfirmModal } from "../Modals/ConfirmModal";
 import toast from "react-hot-toast";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { ConfirmModal } from "../Modals/ConfirmModal";
+import { ModeToggle } from "../ModeToggle/mode-toggle";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+
 
 interface NavbarProps {
   setMenuIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
@@ -12,7 +15,7 @@ interface NavbarProps {
 
 export const Navbar = ({ setMenuIsVisible }: NavbarProps) => {
   const navigate = useNavigate()
-  const { token, logout } = useAuth();
+  const { token, logout, user } = useAuth();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const getNavLinkClassName = (isActive: boolean) => {
@@ -45,6 +48,17 @@ export const Navbar = ({ setMenuIsVisible }: NavbarProps) => {
           />
 
           <ul className="hidden lg:flex items-center list-none space-x-2">
+            <li className='mr-2'>
+              {token && (
+                <Link to="/account" onClick={() => setMenuIsVisible(false)} className="flex items-center gap-2">
+                  <Avatar className="w-[40px] h-[40px]">
+                    <AvatarImage src={profileDefault} className="object-cover" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                  <p className="text-lg font-medium">{user?.name}</p>
+                </Link>
+              )}
+            </li>
             <li>
               <NavLink
                 to="/"

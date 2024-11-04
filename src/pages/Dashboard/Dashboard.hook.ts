@@ -1,20 +1,14 @@
-import { useAuth } from "@/contexts/AuthContext/authContext";
-import axios from "axios";
+import { API_INSTANCE } from "@/services/api";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
 const UseDashboard = () => {
-    const { token } = useAuth()
     const [loading, setLoading] = useState(false)
 
     const getAllMovies = async () => {
         try {
             setLoading(true)
-            const response = await axios.get("http://localhost:3333/movies", {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            const response = await API_INSTANCE.get("/movies");
 
             return response.data
         } catch (error) {

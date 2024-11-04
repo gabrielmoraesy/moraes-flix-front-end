@@ -1,6 +1,15 @@
+import profileDefault from '@/assets/images/profileDefault.jpg';
+import { ConfirmModal } from "@/components/Modals/ConfirmModal";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { useAuth } from "@/contexts/AuthContext/authContext";
 import { IMovie } from "@/interfaces/IMovie";
 import { IReview } from "@/interfaces/IReview";
+import { API_INSTANCE } from "@/services/api";
 import { renderStars } from "@/utils/stars";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import {
   ArrowBendUpLeft,
   ArrowsInLineVertical,
@@ -10,29 +19,25 @@ import {
   Trash
 } from "phosphor-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import UseMovieDetails from "./MovieDetails.hook";
-import { Progress } from "@/components/ui/progress"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import profileDefault from '@/assets/images/profileDefault.jpg'
-import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { useAuth } from "@/contexts/AuthContext/authContext";
 import toast from "react-hot-toast";
-import axios from "axios";
-import { ConfirmModal } from "@/components/Modals/ConfirmModal";
+import { useNavigate } from "react-router-dom";
+import UseMovieDetails from "./MovieDetails.hook";
 
 export const MovieDetails = () => {
-  const { user, token } = useAuth()
+  const navigate = useNavigate();
+  const { user } = useAuth()
   const [movie, setMovie] = useState<IMovie | null>(null);
   const { getMovieById, loading } = UseMovieDetails();
-  const [tasksOpenAndClose, setTasksOpenAndClose] = useState(true)
+  const [myReviewsIsOpen, setMyReviewsIsOpen] = useState(true);
   const [showDeleteReviewModal, setShowDeleteReviewModal] = useState(false);
 
-  const quantityReviews = movie?.reviews?.length
-  const totalReviews = movie?.reviews?.reduce((acc: number, review: IReview) => review ? acc + review.rating : acc, 0)
-  const averageReview = totalReviews! / quantityReviews!;
+  const quantityReviews = movie?.reviews?.length || 0;
+  const totalReviews = movie?.reviews?.reduce((acc: number, review: IReview) => review ? acc + review.rating : acc, 0) || 0;
+  const averageReview = quantityReviews > 0 ? totalReviews / quantityReviews : 0;
+
+  // Use Number.isNaN para garantir que seja um número antes de aplicar .toFixed
+  const formattedAverageReview = Number.isNaN(averageReview) ? "0" : averageReview.toFixed(1);
+
 
   const starsPerReview = (reviews: IReview[]): { [key: number]: number } => {
     const starCounts: { [key: number]: number } = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
@@ -68,11 +73,7 @@ export const MovieDetails = () => {
         });
       }
 
-      await axios.delete(`http://localhost:3333/reviews/${reviewId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      await API_INSTANCE.delete(`/reviews/${reviewId}`);
 
       toast.success("Avaliação deletada com sucesso")
     } catch (error) {
@@ -80,52 +81,52 @@ export const MovieDetails = () => {
     }
   }
 
-  console.log("movie", movie)
-
   return (
     <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto p-8">
-        <div className="flex justify-between border-b-2 border-gray-300 pb-1">
-          <h1 className="text-2xl font-bold">{movie?.title}</h1>
-          <Link to="/">
+      <div className="max-w-7xl mx-auto p-4 sm:p-8">
+        <div className="flex justify-between items-center border-b-2 border-gray-300 pb-1">
+          <h1 className="text-lg sm:text-2xl font-bold">{movie?.title}</h1>
+          <Button onClick={() => navigate(-1)}>
             <ArrowBendUpLeft size={32} />
-          </Link>
+          </Button >
         </div>
-        <div className="flex flex-col items-center mt-2">
-          <h3 >
+        <div className="flex flex-col items-center mt-2 gap-2.5 sm:gap-2">
+          <h3>
             Filme cadastrado por: {movie?.user?.name} | {movie?.user?.email}
           </h3>
           <p>{movie?.releaseYear} | {movie?.duration}min | {movie?.genre}</p>
-          <p>{movie?.description}</p>
+          <p><span className='font-bold'>Sinopse:</span> {movie?.description}</p>
         </div>
 
-        <div className="flex justify-between items-center mt-8">
-          <h1 className="text-xl font-bold">Avaliações do filme</h1>
+        {loading && <p className="text-lg my-1 mx-2">Carregando...</p>}
+
+        <div className="flex justify-between items-center mt-4 sm:mt-8">
+          <h1 className="text-lg sm:text-xl font-bold">Avaliações do filme</h1>
           <div className="flex items-center gap-2">
             <Info
               size={32}
             />
-            {tasksOpenAndClose ? (
-              <ArrowsInLineVertical size={32} />
+            {myReviewsIsOpen ? (
+              <ArrowsInLineVertical size={32} onClick={() => setMyReviewsIsOpen(false)} />
             ) : (
-              <ArrowsOutLineVertical size={32} />
+              <ArrowsOutLineVertical size={32} onClick={() => setMyReviewsIsOpen(true)} />
             )}
           </div>
         </div>
 
-        <div className="flex justify-between items-center py-2 px-4 rounded-2xl bg-gray-200 mt-4 dark:text-black">
-          <Button className="dark:bg-gray-500 dark:text-white">Fazer uma avaliação</Button>
-          <p className="text-base">Avaliações concluídas | <span className="font-bold">
+        <div className="flex flex-col gap-2 sm:gap-0 sm:flex-row justify-between items-center py-2 px-4 rounded-2xl bg-gray-200 mt-2 sm:mt-4 dark:text-black">
+          <Button className="dark:bg-gray-500 dark:text-white text-sm sm:text-base">Fazer uma avaliação</Button>
+          <p className="text-sm sm:text-base">Avaliações concluídas | <span className="font-bold">
             {quantityReviews}
           </span></p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-8 w-full">
+        <div className={`flex flex-col sm:flex-row gap-8 w-full ${myReviewsIsOpen ? "flex" : "hidden"}`}>
           <div className="mt-4 sm:w-[30%] flex flex-col gap-3">
-            <h1 className="font-medium">Avaliação de clientes</h1>
+            <h1 className="font-medium text-sm sm:text-base">Avaliação de clientes</h1>
             <div className="flex items-center justify-between pb-2 border-b-2 border-gray-200">
-              <h1 className="flex gap-2 text-3xl">{averageReview.toFixed(1) | 0}<Star color="yellow" size={32} fill="yellow" /></h1>
-              <p>{quantityReviews} avaliações</p>
+              <h1 className="flex gap-2 text-3xl">{formattedAverageReview}<Star color="yellow" size={32} fill="yellow" /></h1>
+              <p>{quantityReviews} {quantityReviews === 1 ? "avaliação" : "avaliações"}</p>
             </div>
 
             <div className="flex flex-col justify-start gap-1 w-full">
@@ -143,7 +144,9 @@ export const MovieDetails = () => {
             </div>
           </div>
 
-          <div className="mt-4 sm:w-[70%] flex flex-col gap-3">
+          <div className="mt-2 sm:mt-4 sm:w-[70%] flex flex-col gap-3">
+            {movie?.reviews.length === 0 && <p>Seja o primeiro a avaliar este filme!</p>}
+
             {movie?.reviews?.map((review: IReview) => (
               <div key={review.id} className="bg-gray-200 rounded-lg w-full p-4 flex flex-col gap-3">
                 <div className="flex justify-between">
@@ -157,9 +160,9 @@ export const MovieDetails = () => {
                   {review.userId === user!.id && <Trash size={24} onClick={() => setShowDeleteReviewModal(true)} className="hover:text-red-500 duration-200" />}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-center gap-2">
                   <p className="flex gap-0.2">{renderStars(review.rating)}</p>
-                  <p className="text-sm dark:text-black">Avaliado em {format(review.createdAt, "d 'de' MMMM 'de' yyyy", { locale: ptBR })}</p>
+                  <p className="text-xs sm:text-sm dark:text-black">Avaliado em {format(review.createdAt, "d 'de' MMMM 'de' yyyy", { locale: ptBR })}</p>
                 </div>
                 <p className="dark:text-black">{review.comment || ""}</p>
 

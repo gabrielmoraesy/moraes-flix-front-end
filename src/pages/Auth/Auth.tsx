@@ -6,8 +6,8 @@ export const Auth = () => {
   return (
     <div className="flex flex-col items-center p-8 min-h-screen max-w-4xl mx-auto font-sans bg-white text-black dark:bg-transparent">
       <div className="flex flex-col items-center">
-        <h1 className="text-2xl font-bold">Acesse sua conta</h1>
-        <p className="text-lg mb-5">
+        <h1 className="text-2xl font-bold dark:text-white">Acesse sua conta</h1>
+        <p className="text-lg mb-5 dark:text-white">
           Faça login com sua conta Google para ter acesso às funcionalidades do Gestão de Projetos!
         </p>
 

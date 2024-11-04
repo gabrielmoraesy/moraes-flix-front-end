@@ -2,7 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext/authContext";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { z } from "zod";
 
 const registerSchema = z.object({
@@ -14,6 +16,7 @@ const registerSchema = z.object({
 type RegisterFormInputs = z.infer<typeof registerSchema>;
 
 const RegisterForm = () => {
+    const [showPassword, setShowPassword] = useState(false);
     const { register: createAccount } = useAuth()
 
     const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormInputs>({
@@ -33,7 +36,7 @@ const RegisterForm = () => {
             <Input
                 type="text"
                 placeholder="Digite seu nome..."
-                className="p-2 border border-gray-300 rounded w-full"
+                className="p-2 border border-gray-300 rounded w-full dark:text-white"
                 {...register("name")}
             />
             {errors.name && <span className="text-red-500">{errors.name.message}</span>}
@@ -41,17 +44,29 @@ const RegisterForm = () => {
             <Input
                 type="email"
                 placeholder="Digite seu email..."
-                className="p-2 border border-gray-300 rounded w-full"
+                className="p-2 border border-gray-300 rounded w-full dark:text-white"
                 {...register("email")}
             />
             {errors.email && <span className="text-red-500">{errors.email.message}</span>}
 
-            <Input
-                type="password"
-                placeholder="Digite sua senha..."
-                className="p-2 border border-gray-300 rounded w-full"
-                {...register("password")}
-            />
+            <div className="relative w-full">
+                <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Digite sua senha..."
+                    className="p-2 border border-gray-300 rounded w-full dark:text-white"
+                    {...register("password")}
+                />
+                <div
+                    onClick={() => setShowPassword((prevState) => !prevState)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                >
+                    {showPassword ? (
+                        <AiFillEyeInvisible size={20} color="#575757" />
+                    ) : (
+                        <AiFillEye size={20} color="#575757" />
+                    )}
+                </div>
+            </div>
             {errors.password && <span className="text-red-500">{errors.password.message}</span>}
 
             <Button

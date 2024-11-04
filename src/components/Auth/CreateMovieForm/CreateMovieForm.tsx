@@ -7,7 +7,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useAuth } from "@/contexts/AuthContext/authContext";
 import { cn } from "@/utils/cn";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { ChevronsUpDown } from "lucide-react";
 import { Check } from "phosphor-react";
 import { useState } from "react";
@@ -15,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import toast from 'react-hot-toast'
 import { useNavigate } from "react-router-dom";
+import { API_INSTANCE } from "@/services/api";
 
 interface IMoviesGenres {
     value: string
@@ -31,6 +31,7 @@ const movieGenres: IMoviesGenres[] = [
     { value: "Fantasia", label: "Fantasia" },
     { value: "Ficção Científica", label: "Ficção Científica" },
     { value: "Romance", label: "Romance" },
+    { value: "Animação", label: "Animação" },
 ]
 
 const currentYear = new Date().getFullYear();
@@ -59,13 +60,13 @@ type CreateMovieFormInputs = z.infer<typeof createMovieSchema>;
 
 const CreateMovieForm = () => {
     const navigate = useNavigate()
-    const { user, token } = useAuth();
+    const { user } = useAuth();
     const { register, handleSubmit, formState: { errors } } = useForm<CreateMovieFormInputs>({
         resolver: zodResolver(createMovieSchema),
     });
-
     const [open, setOpen] = useState(false);
     const [genreSelected, setGenreSelected] = useState("");
+    const currentYear = new Date().getFullYear();
 
     const handleCreateMovie = async (data: CreateMovieFormInputs) => {
         if (!genreSelected) {
@@ -74,17 +75,13 @@ const CreateMovieForm = () => {
         }
 
         try {
-            await axios.post("http://localhost:3333/movies", {
+            await API_INSTANCE.post("/movies", {
                 title: data.title,
                 description: data.description,
                 genre: genreSelected,
                 releaseYear: Number(data.releaseYear),
                 duration: Number(data.duration),
                 userId: user!.id
-            }, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
             });
 
             toast.success("Filme criado com sucesso")
@@ -102,6 +99,7 @@ const CreateMovieForm = () => {
                     placeholder="Digite o nome do filme..."
                     className="p-2 border border-gray-300 rounded w-full"
                     {...register("title")}
+                    max={200}
                 />
                 {errors.title && <span className="text-red-500">{errors.title.message}</span>}
             </div>
@@ -113,6 +111,7 @@ const CreateMovieForm = () => {
                     placeholder="Digite a descrição do filme..."
                     className="p-2 border border-gray-300 rounded w-full"
                     {...register("description")}
+                    max={1000}
                 />
                 {errors.description && <span className="text-red-500">{errors.description.message}</span>}
             </div>
@@ -124,6 +123,8 @@ const CreateMovieForm = () => {
                         placeholder="Digite o ano de lançamento..."
                         className="p-2 border border-gray-300 rounded"
                         {...register("releaseYear")}
+                        min={1500}
+                        max={currentYear}
                     />
                     {errors.releaseYear && <span className="text-red-500">{errors.releaseYear.message}</span>}
                 </div>
@@ -134,6 +135,7 @@ const CreateMovieForm = () => {
                         placeholder="Digite a duração (min) do filme..."
                         className="p-2 border border-gray-300 rounded"
                         {...register("duration")}
+                        max={1000}
                     />
                     {errors.duration && <span className="text-red-500">{errors.duration.message}</span>}
                 </div>

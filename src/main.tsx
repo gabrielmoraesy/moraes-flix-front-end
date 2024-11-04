@@ -10,7 +10,6 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Toaster
       containerClassName="pointer-events-none touch-none"
-      data-testid="test_toaster"
       position="top-center"
       toastOptions={{
         style: {
