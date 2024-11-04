@@ -1,40 +1,24 @@
+import { IMovie } from "@/interfaces/IMovie";
 import { TypeAnimation } from "react-type-animation";
 
-export const DynamicPlaceholders = () => {
-  const array = [
-    "Duna: Parte Dois",
-    "Furiosa",
-    "Sobre Ervas Secas",
-    "Zona de Interesse",
-    "Fronteira Verde",
-    "Homem Diferente",
-    "Asas Longas",
-    "Assassino",
-    "O Gosto das Coisas",
-    "Flipside",
-    "Fantasma",
-    "Um Lugar Chamado Casa",
-    "Uma Mulher Que Viveu",
-    "O Químico",
-    "Sangue",
-    "Caçador de Bravos",
-    "Um Mundo Aparte",
-    "Lado Bom",
-    "Desaparecido",
-    "A Face da Verdade",
-    "Passado Sombrio",
-    "O Mergulhador",
-    "Mundo Selvagem"
-  ];
+interface IDynamicPlaceholders {
+  movies?: IMovie[]; // Optional prop
+}
 
-  // Adiciona 1500 após cada item, exceto o último
-  const sequence = array.flatMap((item, index) => {
-    return index === array.length - 1 ? [item] : [item, 1500];
-  });
+export const DynamicPlaceholders = ({ movies = [] }: IDynamicPlaceholders) => {
+  const arrayTitleMovies = movies.map((movie: IMovie) => movie.title);
+
+  const sequence = arrayTitleMovies.length > 0
+    ? arrayTitleMovies.flatMap((item: string, index: number) => {
+      return index === arrayTitleMovies.length - 1 ? [item] : [item, 1500];
+    })
+    : [];
+
+  const finalSequence = sequence.length > 0 ? sequence : ["Pesquise pelo nome do filme...", 1500];
 
   return (
     <TypeAnimation
-      sequence={sequence}
+      sequence={finalSequence}
       wrapper="span"
       speed={1}
       style={{ fontSize: "16px", display: "inline-block" }}

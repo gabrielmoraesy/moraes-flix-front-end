@@ -1,6 +1,6 @@
 // React
 import { useState } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 // Components
 import { MenuMobile } from "./components/MenuMobile/index";
@@ -8,11 +8,18 @@ import { Navbar } from "./components/Navbar/index";
 
 // Pages
 import { Home } from "./pages/Home/index";
-import { ThemeProvider } from "./components/ThemeProvider/theme-provider";
+import { ThemeProvider } from "./contexts/ThemeProvider/theme-provider";
+import { useAuth } from "./contexts/AuthContext/authContext";
+import { Auth } from "./pages/Auth";
+import { CreateMovie } from "./pages/CreateMovie/CreateMovie";
+import { Dashboard } from "./pages/Dashboard";
+import { MovieDetails } from "./pages/MovieDetails";
 
 
 function App() {
+  const { token } = useAuth()
   const [menuIsVisible, setMenuIsVisible] = useState(false);
+  console.log("token:", token)
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -29,33 +36,33 @@ function App() {
             {/* <Route
               path="/account"
               element={user ? <Account /> : <Navigate to="/" />}
-            />
+            /> */}
             <Route
               path="/login"
-              element={!user ? <Login /> : <Navigate to="/" />}
+              element={!token ? <Auth /> : <Navigate to="/" />}
             />
             <Route
               path="/dashboard"
-              element={user ? <Dashboard /> : <Navigate to="/" />}
+              element={token ? <Dashboard /> : <Navigate to="/" />}
             />
             <Route
-              path="/projects/create"
-              element={user ? <CreateProject /> : <Navigate to="/" />}
+              path="/movies/create"
+              element={token ? <CreateMovie /> : <Navigate to="/" />}
             />
-            <Route
+            {/* <Route
               path="/projects/edit/:id"
               element={user ? <EditProject /> : <Navigate to="/" />}
-            />
-            <Route
+            /> */}
+            {/* <Route
               path="/tasks/edit/:idProject/:idTask"
               element={user ? <EditTask /> : <Navigate to="/" />}
-            />
-            <Route path="/projects/:id" element={<ProjectDetails />} />
-            <Route
+            /> */}
+            <Route path="/movies/:id" element={<MovieDetails />} />
+            {/* <Route
               path="/tasks/:idProject/:idTask"
               element={user ? <TaskDetails /> : <Navigate to="/" />}
-            />
-            <Route path="/about" element={<About />} /> */}
+            /> */}
+            {/* <Route path="/about" element={<About />} /> */}
           </Routes>
         </BrowserRouter>
       </div>

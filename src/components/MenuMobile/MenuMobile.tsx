@@ -1,3 +1,4 @@
+import { useAuth } from "@/contexts/AuthContext/authContext";
 import { X } from "phosphor-react";
 import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
@@ -11,8 +12,7 @@ export const MenuMobile = ({
   menuIsVisible,
   setMenuIsVisible,
 }: NavbarProps) => {
-  // const { signOutWithGoogle } = useAuth();
-  // const { user } = useUser();
+  const { token, logout } = useAuth()
 
   useEffect(() => {
     document.body.style.overflowY = menuIsVisible ? "hidden" : "auto";
@@ -47,46 +47,48 @@ export const MenuMobile = ({
           className="text-3xl text-white"
           onClick={() => setMenuIsVisible(false)}
         >
-          Projetos
+          Filmes
         </NavLink>
         <NavLink
-          to="/dashboard"
+          to={token ? "/dashboard" : "/login"}
           className="text-3xl text-white"
           onClick={() => setMenuIsVisible(false)}
         >
-          Meus Projetos
+          Dashboard
         </NavLink>
         <NavLink
-          to="/projects/create"
+          to={token ? "/movies/create" : "/login"}
           className="text-3xl text-white"
-          onClick={() => setMenuIsVisible(false)}
+          onClick={() => { setMenuIsVisible(false) }}
         >
-          Criar Projeto
+          Criar filme
         </NavLink>
-        <NavLink
-          to="/login"
-          className="text-3xl text-white"
-          onClick={() => setMenuIsVisible(false)}
-        >
-          Entrar
-        </NavLink>
+        {!token &&
+          <NavLink
+            to="/login"
+            className="text-3xl text-white"
+            onClick={() => setMenuIsVisible(false)}
+          >
+            Entrar
+          </NavLink>}
         <NavLink
           to="/about"
           className="text-3xl text-white"
           onClick={() => setMenuIsVisible(false)}
         >
-          Sobre
+          Saiba mais
         </NavLink>
-        <NavLink
-          to="/"
-          onClick={() => {
-            // signOutWithGoogle();
-            setMenuIsVisible(false);
-          }}
-          className="text-3xl text-white"
-        >
-          Sair
-        </NavLink>
+        {token &&
+          <NavLink
+            to="/login"
+            onClick={() => {
+              logout()
+              setMenuIsVisible(false);
+            }}
+            className="text-3xl text-white"
+          >
+            Sair
+          </NavLink>}
       </nav>
     </section>
   );
