@@ -1,74 +1,21 @@
-// React
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 
-// Icons
 import { ConfirmModal } from "@/components/Modals/ConfirmModal";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/AuthContext/authContext";
 import { IMovie } from "@/interfaces/IMovie";
 import { IReview } from "@/interfaces/IReview";
-import { API_INSTANCE } from "@/services/api";
 import { renderStars } from '@/utils/stars';
 import { ArrowsInLineVertical, ArrowsOutLineVertical } from "phosphor-react";
-import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
-import UseHome from "../Home/Home.hook";
+import useDashboard from "./Dashboard.hook";
 
 export const Dashboard = () => {
-  const { user } = useAuth();
-  const [myMoviesIsOpen, setMyMoviesIsOpen] = useState(true);
-  const [myReviewsIsOpen, setMyReviewsIsOpen] = useState(true);
   const [showDeleteMovieModal, setShowDeleteMovieModal] = useState(false);
   const [showDeleteReviewModal, setShowDeleteReviewModal] = useState(false);
-  const [myMovies, setMyMovies] = useState<IMovie[]>();
-  const [myReviews, setMyReviews] = useState<IReview[]>();
+  const [myMoviesIsOpen, setMyMoviesIsOpen] = useState(true);
+  const [myReviewsIsOpen, setMyReviewsIsOpen] = useState(true);
 
-  const { getAllMovies, loading } = UseHome();
-
-  const handleDeleteMovie = async (movieId: string) => {
-    try {
-      setMyMovies(prevState => prevState!.filter(movie => movie.id !== movieId))
-
-      await API_INSTANCE.delete(`/movies/${movieId}`);
-
-      toast.success("Filme deletado com sucesso")
-    } catch (error) {
-      toast.error(`Erro ao deletar filme: ${error}`);
-    }
-  };
-
-  const handleDeleteReview = async (reviewId: string) => {
-    try {
-      setMyReviews(prevState => prevState!.filter(review => review.id !== reviewId))
-
-      await API_INSTANCE(`/reviews/${reviewId}`);
-
-      toast.success("Avaliação deletada com sucesso")
-    } catch (error) {
-      toast.error(`Erro ao deletar avaliação: ${error}`);
-    }
-  }
-
-  useEffect(() => {
-    async function fetchMoviesAndReviews() {
-      const movies = await getAllMovies();
-
-      const myMovies: IMovie[] = movies.filter((movie: IMovie) => movie.userId === user?.id);
-      setMyMovies(myMovies);
-
-      const userReviews = movies.flatMap((movie: IMovie) =>
-        movie.reviews.map((review: IReview) => ({
-          ...review,
-          movieTitle: movie.title
-        }))
-      ).filter((review: IReview) => review.userId === user!.id);
-
-      setMyReviews(userReviews);
-    }
-
-    fetchMoviesAndReviews();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  const { handleDeleteMovie, handleDeleteReview, loading, myMovies, myReviews } = useDashboard()
 
   const renderButtonsTable = (table: "myMovies" | "myReviews") => {
     if (table === 'myMovies') {
@@ -189,7 +136,7 @@ export const Dashboard = () => {
                 Ver
               </Link>
               <Link
-                to={`/reviews/edit/${review.id}`}
+                to={`/movies/${review.movieId}`}
                 className="border-2 border-gray-300 rounded-md px-4 py-2 hover:bg-gray-300 dark:hover:text-black duration-200"
               >
                 Editar

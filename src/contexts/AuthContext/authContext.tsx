@@ -20,7 +20,7 @@ interface IAuthProviderProps {
 interface IUser {
     email: string;
     name: string;
-    id: string
+    id: string;
 }
 
 interface IUserLogin {
@@ -29,7 +29,7 @@ interface IUserLogin {
 }
 
 interface IUserRegister {
-    name: string
+    name: string;
     email: string;
     password: string;
 }
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
                 password: userData.password
             });
 
-            toast.success("Conta criada com sucesso")
+            toast.success("Conta criada com sucesso");
         } catch (error) {
             if (error instanceof AxiosError && error.response) {
                 toast.error(`${error.response.data.message}`);
@@ -72,9 +72,7 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
             setToken(res.data.token);
 
             localStorage.setItem('token', res.data.token);
-            localStorage.setItem('username', res.data.user.name);
-            localStorage.setItem('email', res.data.user.email);
-            localStorage.setItem('userId', res.data.user.id);
+            localStorage.setItem('user', JSON.stringify(res.data.user));
         } catch (error) {
             if (error instanceof AxiosError && error.response) {
                 toast.error(`${error.response.data.message}`);
@@ -82,27 +80,21 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
                 toast.error("Erro ao entrar na conta");
             }
         }
-
-    }
+    };
 
     const logout = () => {
         setUser(null);
         setToken('');
         localStorage.removeItem('token');
-        localStorage.removeItem('username');
-        localStorage.removeItem('email');
-        localStorage.removeItem('userId');
+        localStorage.removeItem('user');
     };
 
     useEffect(() => {
-        const userObject = {
-            name: localStorage.getItem('username') || '',
-            email: localStorage.getItem('email') || '',
-            id: localStorage.getItem('userId') || ''
+        const userString = localStorage.getItem('user');
+        if (userString) {
+            setUser(JSON.parse(userString));
         }
-
-        setUser(userObject)
-    }, [])
+    }, []);
 
     return (
         <AuthContext.Provider value={{ user, token, register, login, logout }}>

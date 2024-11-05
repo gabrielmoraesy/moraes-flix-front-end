@@ -1,4 +1,4 @@
-import CreateMovieForm from "@/components/Auth/CreateMovieForm/CreateMovieForm";
+import CreateMovieForm from "@/components/Form/CreateMovieForm/CreateMovieForm";
 
 export const CreateMovie = () => {
     return (

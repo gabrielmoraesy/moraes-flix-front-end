@@ -1,5 +1,5 @@
-import LoginForm from "@/components/Auth/LoginForm/LoginForm";
-import RegisterForm from "@/components/Auth/RegisterForm/RegisterForm";
+import LoginForm from "@/components/Form/LoginForm/LoginForm";
+import RegisterForm from "@/components/Form/RegisterForm/RegisterForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Auth = () => {

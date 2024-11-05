@@ -17,7 +17,7 @@ createRoot(document.getElementById('root')!).render(
           color: "#fff",
           padding: "15px",
           borderRadius: "32px",
-          gap: "6px", // o texto tem margin-left de 10px, gap 6px fará o espaço ser de 16px.
+          gap: "6px",
           maxWidth: "max-content",
           width: "95%",
           pointerEvents: "none",

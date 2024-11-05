@@ -2,7 +2,7 @@ import { IMovie } from "@/interfaces/IMovie";
 import { TypeAnimation } from "react-type-animation";
 
 interface IDynamicPlaceholders {
-  movies?: IMovie[]; // Optional prop
+  movies?: IMovie[];
 }
 
 export const DynamicPlaceholders = ({ movies = [] }: IDynamicPlaceholders) => {

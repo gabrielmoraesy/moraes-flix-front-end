@@ -54,14 +54,12 @@ export function useChangePopStateEvent({
       gallery: ["class"],
     };
 
-    // Create a MutationObserver to observe changes in attributes of the body element
     const observer = new MutationObserver(checkModalOpen);
     observer.observe(document.body, {
       attributes: true,
       attributeFilter: attributeFilterToObserve[type],
     });
 
-    // Clean up by removing the event listener and disconnecting the observer
     return () => {
       window.removeEventListener("popstate", onBackButtonEvent);
       observer.disconnect();

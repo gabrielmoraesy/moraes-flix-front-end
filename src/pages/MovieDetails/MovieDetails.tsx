@@ -1,12 +1,12 @@
 import profileDefault from '@/assets/images/profileDefault.jpg';
+import ActionsReviewDropDown from '@/components/DropDown/ActionsReviewDropDown/ActionsReviewDropDown';
 import { ConfirmModal } from "@/components/Modals/ConfirmModal";
+import { CreateOrEditReviewModal } from '@/components/Modals/CreateOrEditReviewModal';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/contexts/AuthContext/authContext";
-import { IMovie } from "@/interfaces/IMovie";
 import { IReview } from "@/interfaces/IReview";
-import { API_INSTANCE } from "@/services/api";
 import { renderStars } from "@/utils/stars";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -15,71 +15,33 @@ import {
   ArrowsInLineVertical,
   ArrowsOutLineVertical,
   Info,
-  Star,
-  Trash
+  Star
 } from "phosphor-react";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UseMovieDetails from "./MovieDetails.hook";
 
 export const MovieDetails = () => {
   const navigate = useNavigate();
   const { user } = useAuth()
-  const [movie, setMovie] = useState<IMovie | null>(null);
-  const { getMovieById, loading } = UseMovieDetails();
   const [myReviewsIsOpen, setMyReviewsIsOpen] = useState(true);
   const [showDeleteReviewModal, setShowDeleteReviewModal] = useState(false);
 
-  const quantityReviews = movie?.reviews?.length || 0;
-  const totalReviews = movie?.reviews?.reduce((acc: number, review: IReview) => review ? acc + review.rating : acc, 0) || 0;
-  const averageReview = quantityReviews > 0 ? totalReviews / quantityReviews : 0;
-
-  // Use Number.isNaN para garantir que seja um número antes de aplicar .toFixed
-  const formattedAverageReview = Number.isNaN(averageReview) ? "0" : averageReview.toFixed(1);
-
-
-  const starsPerReview = (reviews: IReview[]): { [key: number]: number } => {
-    const starCounts: { [key: number]: number } = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-
-    reviews.forEach((review) => {
-      if (review.rating >= 1 && review.rating <= 5) {
-        starCounts[review.rating] += 1; // Incrementa a contagem para a estrela correspondente
-      }
-    });
-
-    return starCounts;
-  };
+  const
+    { movie,
+      loading,
+      handleDeleteReview,
+      quantityReviews,
+      formattedAverageReview,
+      starsPerReview,
+      checkUserReview,
+      showCreateReviewModal,
+      setShowCreateReviewModal,
+      showEditReviewModal,
+      setShowEditReviewModal
+    } = UseMovieDetails();
 
   const starCounts = starsPerReview(movie?.reviews || []);
-
-  useEffect(() => {
-    async function fetchMovie() {
-      const movie = await getMovieById();
-      setMovie(movie);
-    }
-
-    fetchMovie();
-  }, []);
-
-  const handleDeleteReview = async (reviewId: string) => {
-    try {
-      if (movie) {
-        const updatedReviews = movie.reviews.filter(review => review.id !== reviewId);
-
-        setMovie({
-          ...movie,
-          reviews: updatedReviews
-        });
-      }
-
-      await API_INSTANCE.delete(`/reviews/${reviewId}`);
-
-      toast.success("Avaliação deletada com sucesso")
-    } catch (error) {
-      toast.error(`Erro ao deletar avaliação: ${error}`);
-    }
-  }
 
   return (
     <div className="min-h-screen">
@@ -115,7 +77,15 @@ export const MovieDetails = () => {
         </div>
 
         <div className="flex flex-col gap-2 sm:gap-0 sm:flex-row justify-between items-center py-2 px-4 rounded-2xl bg-gray-200 mt-2 sm:mt-4 dark:text-black">
-          <Button className="dark:bg-gray-500 dark:text-white text-sm sm:text-base">Fazer uma avaliação</Button>
+          <Button
+            className="dark:bg-gray-500 dark:text-white text-sm sm:text-base"
+            onClick={() => checkUserReview()}
+          >
+            Fazer uma avaliação
+          </Button>
+
+          <CreateOrEditReviewModal open={showCreateReviewModal} setOpen={setShowCreateReviewModal} movie={movie} variant="create" />
+
           <p className="text-sm sm:text-base">Avaliações concluídas | <span className="font-bold">
             {quantityReviews}
           </span></p>
@@ -157,25 +127,36 @@ export const MovieDetails = () => {
                     </Avatar>
                     <p className="text-black">{review?.user?.name}</p>
                   </div>
-                  {review.userId === user!.id && <Trash size={24} onClick={() => setShowDeleteReviewModal(true)} className="hover:text-red-500 duration-200" />}
+                  {review.userId === user!.id &&
+                    <ActionsReviewDropDown
+                      setShowDeleteReviewModal={setShowDeleteReviewModal}
+                      setShowEditReviewModal={setShowEditReviewModal}
+                    />
+                  }
+
+                  {showDeleteReviewModal && (
+                    <ConfirmModal
+                      open={showDeleteReviewModal}
+                      setOpen={setShowDeleteReviewModal}
+                      onConfirm={() => handleDeleteReview(review.id)}
+                      onCancel={() => setShowDeleteReviewModal((prevState) => !prevState)}
+                      title={"Excluir avaliação"}
+                      descripion={"Tem certeza que deseja excluir esta avaliação?"}
+                    />
+                  )}
+
+                  {showEditReviewModal && (
+                    <CreateOrEditReviewModal open={showEditReviewModal} setOpen={setShowEditReviewModal} movie={movie} variant="edit" />
+                  )}
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center gap-2">
                   <p className="flex gap-0.2">{renderStars(review.rating)}</p>
                   <p className="text-xs sm:text-sm dark:text-black">Avaliado em {format(review.createdAt, "d 'de' MMMM 'de' yyyy", { locale: ptBR })}</p>
                 </div>
-                <p className="dark:text-black">{review.comment || ""}</p>
-
-                {showDeleteReviewModal && (
-                  <ConfirmModal
-                    open={showDeleteReviewModal}
-                    setOpen={setShowDeleteReviewModal}
-                    onConfirm={() => handleDeleteReview(review.id)}
-                    onCancel={() => setShowDeleteReviewModal((prevState) => !prevState)}
-                    title={"Excluir avaliação"}
-                    descripion={"Tem certeza que deseja excluir esta avaliação?"}
-                  />
-                )}
+                <p className="dark:text-black">
+                  {review.comment || ""}
+                </p>
               </div>
             ))}
           </div>
@@ -183,6 +164,6 @@ export const MovieDetails = () => {
       </div>
 
 
-    </div>
+    </div >
   );
 };
