@@ -20,7 +20,7 @@ const UseMovieDetails = () => {
     const getMovieById = async () => {
         try {
             setLoading(true);
-            const response = await api.get(`movies/${id}`);
+            const response = await api.get(`/movies/${id}`);
             setMovie(response.data);
         } catch (error) {
             toast.error(`Erro ao buscar filmes: ${error}`);

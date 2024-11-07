@@ -1,7 +1,7 @@
-import { IMovie } from '@/interfaces/IMovie'
-import { renderStars } from '@/utils/stars'
-import { Fragment } from 'react'
-import { Link } from 'react-router-dom'
+import { IMovie } from '@/interfaces/IMovie';
+import { renderStars } from '@/utils/stars';
+import { Fragment } from 'react';
+import { Link } from 'react-router-dom';
 
 interface MoviesHomeProps {
     filteredMovies: IMovie[];

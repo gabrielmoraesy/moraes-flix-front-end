@@ -33,7 +33,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route
               path="/account"
-              element={token ? <MyAccount /> : <Navigate to="/" />}
+              element={token ? <MyAccount /> : <Navigate to="/login" />}
             />
             <Route
               path="/login"
@@ -41,19 +41,19 @@ function App() {
             />
             <Route
               path="/dashboard"
-              element={token ? <Dashboard /> : <Navigate to="/" />}
+              element={token ? <Dashboard /> : <Navigate to="/login" />}
             />
             <Route
               path="/movies/create"
-              element={token ? <CreateMovie /> : <Navigate to="/" />}
+              element={token ? <CreateMovie /> : <Navigate to="/login" />}
             />
             <Route
               path="/movies/edit/:id"
-              element={token ? <EditMovie /> : <Navigate to="/" />}
+              element={token ? <EditMovie /> : <Navigate to="/login" />}
             />
             <Route
               path="/movies/:id"
-              element={token ? <MovieDetails /> : <Navigate to="/" />}
+              element={token ? <MovieDetails /> : <Navigate to="/login" />}
             />
             <Route path="/about" element={<About />} />
           </Routes>

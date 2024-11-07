@@ -17,7 +17,6 @@ const useDashboard = () => {
     const [showDeleteMovieModal, setShowDeleteMovieModal] = useState(false);
     const [showDeleteReviewModal, setShowDeleteReviewModal] = useState(false);
 
-
     const getAllMovies = async () => {
         try {
             setLoading(true)

@@ -53,7 +53,7 @@ const useHome = () => {
 
 
     const applyFilters = () => {
-        return movies.filter(movie => {
+        return movies!.filter(movie => {
             const matchesTitle = searchTitle
                 ? movie.title.toLowerCase().includes(searchTitle.toLowerCase())
                 : true;

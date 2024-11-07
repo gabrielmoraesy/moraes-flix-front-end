@@ -1,3 +1,4 @@
+import { LoaderCircle } from "lucide-react";
 import useDashboard from "./Dashboard.hook";
 import MyMoviesDashboard from "./fragments/MyMoviesDashboard/MyMoviesDashboard";
 import MyReviewsDashboard from "./fragments/MyReviewsDashboard/MyReviewsDashboard";
@@ -32,7 +33,7 @@ export const Dashboard = () => {
         {renderButtonsTable("myMovies")}
       </div>
 
-      {loading && <p className="text-lg my-1 mx-2">Carregando...</p>}
+      {loading && <p className="text-lg my-1 mx-2 animate-spin"><LoaderCircle /></p>}
 
       <MyMoviesDashboard
         myMovies={myMovies}
@@ -46,6 +47,8 @@ export const Dashboard = () => {
         Suas avaliações
         {renderButtonsTable("myReviews")}
       </div>
+
+      {loading && <p className="text-lg my-1 mx-2 animate-spin"><LoaderCircle /></p>}
 
       <MyReviewsDashboard
         myReviews={myReviews}
