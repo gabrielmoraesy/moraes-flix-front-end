@@ -35,7 +35,7 @@ export const Home = () => {
       />
 
       {loading && <p className="text-lg mx-8 my-4">Carregando...</ p>}
-      {filteredMovies.length === 0 && <p className="text-lg mx-8 my-4">Não existem filmes em exibição.</ p>}
+      {filteredMovies.length === 0 && !loading && <p className="text-lg mx-8 my-4">Não existem filmes em exibição.</ p>}
 
       <MoviesHome
         filteredMovies={filteredMovies}
