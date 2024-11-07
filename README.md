@@ -39,27 +39,10 @@ Com uma interface amigável, o MoraesFlix facilita a gestão de suas coleções 
 $ npm install
 ```
 
-## Create database
-```bash
-$ docker compose up -d
-```
-
-## Generate Prisma Client
-
-```bash
-$ npm run db:generate
-```
-
-## Run Database Migrations
-
-```bash
-$ npx prisma migrate deploy
-```
-
 ## Running the app
 
 ```bash
-$ npm run dev
+$ npm run preview
 ```
 ## Features
 
