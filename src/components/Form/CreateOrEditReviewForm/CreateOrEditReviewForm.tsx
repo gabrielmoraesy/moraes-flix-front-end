@@ -118,7 +118,7 @@ const CreateOrEditReviewForm = ({ movie, setOpen, variant }: CreateReviewFormPro
 
             <Button
                 type="submit"
-                className="w-full bg-primaryBlue p-2 rounded-lg text-white"
+                className="w-full bg-primaryBlue p-2 rounded-lg text-white dark:hover:text-black"
             >
                 Avaliar
             </Button>
