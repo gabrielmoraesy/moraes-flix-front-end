@@ -53,20 +53,24 @@ export const MenuMobile = ({
         >
           Filmes
         </NavLink>
-        <NavLink
-          to={token ? "/dashboard" : "/login"}
-          className="text-3xl text-white"
-          onClick={() => setMenuIsVisible(false)}
-        >
-          Dashboard
-        </NavLink>
-        <NavLink
-          to={token ? "/movies/create" : "/login"}
-          className="text-3xl text-white"
-          onClick={() => { setMenuIsVisible(false) }}
-        >
-          Criar filme
-        </NavLink>
+        {token &&
+          <NavLink
+            to={token ? "/dashboard" : "/login"}
+            className="text-3xl text-white"
+            onClick={() => setMenuIsVisible(false)}
+          >
+            Dashboard
+          </NavLink>
+        }
+        {token &&
+          <NavLink
+            to={token ? "/movies/create" : "/login"}
+            className="text-3xl text-white"
+            onClick={() => { setMenuIsVisible(false) }}
+          >
+            Criar filme
+          </NavLink>
+        }
         {!token &&
           <NavLink
             to="/login"

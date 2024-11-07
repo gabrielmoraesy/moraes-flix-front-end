@@ -2,12 +2,10 @@ import profileDefault from '@/assets/images/profileDefault.jpg';
 import { useAuth } from "@/contexts/AuthContext/authContext";
 import { List } from "phosphor-react";
 import { useState } from "react";
-import toast from "react-hot-toast";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { ConfirmModal } from "../Modals/ConfirmModal";
 import { ModeToggle } from "../ModeToggle/mode-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-
 
 interface NavbarProps {
   setMenuIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
@@ -25,12 +23,6 @@ export const Navbar = ({ setMenuIsVisible }: NavbarProps) => {
   const handleLogout = () => {
     logout()
     navigate("/login")
-  }
-
-  const verifyIsLogged = () => {
-    if (!token) {
-      toast.error("Faça login para acessar")
-    }
   }
 
   return (
@@ -67,28 +59,30 @@ export const Navbar = ({ setMenuIsVisible }: NavbarProps) => {
                 Filmes
               </NavLink>
             </li>
-            <li>
-              <NavLink
-                to={token ? "/dashboard" : "/login"}
-                className={({ isActive }) =>
-                  token ? getNavLinkClassName(isActive) : "text-lg p-2 hover:text-[#bbb] duration-200"
-                }
-                onClick={verifyIsLogged}
-              >
-                Dashboard
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to={token ? "/movies/create" : "/login"}
-                className={({ isActive }) =>
-                  token ? getNavLinkClassName(isActive) : "text-lg p-2 hover:text-[#bbb] duration-200"
-                }
-                onClick={verifyIsLogged}
-              >
-                Criar filme
-              </NavLink>
-            </li>
+            {token &&
+              <li>
+                <NavLink
+                  to={token ? "/dashboard" : "/login"}
+                  className={({ isActive }) =>
+                    token ? getNavLinkClassName(isActive) : "text-lg p-2 hover:text-[#bbb] duration-200"
+                  }
+                >
+                  Dashboard
+                </NavLink>
+              </li>
+            }
+            {token &&
+              <li>
+                <NavLink
+                  to={token ? "/movies/create" : "/login"}
+                  className={({ isActive }) =>
+                    token ? getNavLinkClassName(isActive) : "text-lg p-2 hover:text-[#bbb] duration-200"
+                  }
+                >
+                  Criar filme
+                </NavLink>
+              </li>
+            }
             {!token &&
               <li>
                 <NavLink
