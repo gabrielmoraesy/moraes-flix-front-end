@@ -37,7 +37,7 @@ const MoviesHome = ({ filteredMovies, sortedMoviesByRating, calculateAverageRevi
                 ))}
             </div>
 
-            {filteredMovies.length !== 0 && <h1 className="text-base font-bold mx-8">Filmes recomendados</h1>}
+            {sortedMoviesByRating.length !== 0 && <h1 className="text-base font-bold mx-8">Filmes recomendados</h1>}
 
             <div className="flex flex-wrap gap-2 mx-8 my-8">
                 {sortedMoviesByRating.slice(0, 6).map((movie: IMovie) => (

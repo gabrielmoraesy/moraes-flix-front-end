@@ -12,7 +12,7 @@ interface HeaderHomeProps {
 const HeaderHome = ({ filteredMovies, searchTitle, setSearchTitle }: HeaderHomeProps) => {
     return (
         <div className="relative flex justify-between items-center mx-8 group">
-            <h1 className="text-2xl font-bold">Filmes</h1>
+            <h1 className="text-xl sm:text-2xl font-bold">Filmes</h1>
             <input
                 type="text"
                 onChange={(e) => setSearchTitle(e.target.value)}

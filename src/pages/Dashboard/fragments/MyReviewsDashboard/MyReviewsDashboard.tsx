@@ -69,8 +69,8 @@ const MyReviewsDashboard = (
 
             {myReviews && myReviews.length === 0 && (
                 <div className={`mt-4 flex flex-col gap-2 items-center bg-gray-200 dark:bg-neutral-900  rounded-lg p-4 w-4/5 mx-auto ${myReviewsIsOpen ? "flex" : "hidden"}`}>
-                    <p className="text-lg">Você não possui nenhuma avaliação</p>
-                    <Link to="/" className="bg-primaryBlue text-white text-center cursor-pointer rounded-[10px] font-bold border-0 py-[10px] px-[15px] text-base ml-4">
+                    <p className="text-sm sm:text-lg">Você não possui nenhuma avaliação</p>
+                    <Link to="/" className="bg-primaryBlue text-white text-center cursor-pointer rounded-[10px] font-bold border-0 py-[10px] px-[15px] text-sm sm:text-base ml-4">
                         Avaliar um filme
                     </Link>
                 </div>
