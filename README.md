@@ -1,5 +1,5 @@
 <p align="center">
-  <h1>MoraesFlix</h1>
+  <h1>🎬 MoraesFlix ⭐</h1>
 </p>
 
 ## Description
