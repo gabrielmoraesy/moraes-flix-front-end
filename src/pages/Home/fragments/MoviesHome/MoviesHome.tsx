@@ -23,7 +23,7 @@ const MoviesHome = ({ filteredMovies, sortedMoviesByRating, calculateAverageRevi
                             <p className="text-sm">{movie.releaseYear} | {movie.duration}min | {movie.genre}</p>
                             <div className="flex gap-2 items-center">
                                 <p className="flex">{renderStars(calculateAverageReview(movie))}</p>
-                                <p>{calculateAverageReview(movie)}</p>
+                                <p>{calculateAverageReview(movie).toFixed(1)}</p>
                             </div>
                         </div>
 
@@ -75,7 +75,7 @@ const MoviesHome = ({ filteredMovies, sortedMoviesByRating, calculateAverageRevi
                             <p className="text-sm">{movie.releaseYear} | {movie.duration}min | {movie.genre}</p>
                             <div className="flex gap-2 items-center">
                                 <p className="flex">{renderStars(calculateAverageReview(movie))}</p>
-                                <p>{calculateAverageReview(movie)}</p>
+                                <p>{calculateAverageReview(movie).toFixed(1)}</p>
                             </div>
                         </div>
 

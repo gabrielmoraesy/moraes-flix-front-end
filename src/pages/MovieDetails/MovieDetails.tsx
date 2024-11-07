@@ -7,7 +7,8 @@ import HeaderReviewsMovieDetails from './fragments/HeaderReviewsMovieDetails/Hea
 import InformartionMovieDetails from './fragments/InformartionMovieDetails/InformartionMovieDetails';
 import ResumeReviewsMovieDetails from './fragments/ResumeReviewsMovieDetails/ResumeReviewsMovieDetails';
 import ReviewsMovieDetails from './fragments/ReviewsMovieDetails/ReviewsMovieDetails';
-import { LoaderCircle } from "lucide-react";
+import SkeletonInformationMovieDetails from "./fragments/SkeletonInformationMovieDetails/SkeletonInformationMovieDetails";
+import SkeletonReviewMovieDetails from "./fragments/SkeletonReviewMovieDetails/SkeletonReviewMovieDetails";
 
 export const MovieDetails = () => {
   const
@@ -32,9 +33,8 @@ export const MovieDetails = () => {
   return (
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto p-4 sm:p-8">
-        <InformartionMovieDetails movie={movie} loading={loading} />
-
-        {loading && <p className="text-lg my-1 mx-2 animate-spin"><LoaderCircle /></p>}
+        {!loading && <InformartionMovieDetails movie={movie} loading={loading} />}
+        {loading && <SkeletonInformationMovieDetails />}
 
         <div className="flex justify-between items-center mt-4 sm:mt-8">
           <h1 className="text-lg sm:text-xl font-bold">Avaliações do filme</h1>
@@ -60,14 +60,15 @@ export const MovieDetails = () => {
             starCounts={starCounts}
           />
 
-          <ReviewsMovieDetails
+          {loading && <SkeletonReviewMovieDetails />}
+          {!loading && <ReviewsMovieDetails
             movie={movie}
             showDeleteReviewModal={showDeleteReviewModal}
             setShowDeleteReviewModal={setShowDeleteReviewModal}
             showEditReviewModal={showEditReviewModal}
             setShowEditReviewModal={setShowEditReviewModal}
             handleDeleteReview={handleDeleteReview}
-          />
+          />}
         </div>
       </div>
     </div >

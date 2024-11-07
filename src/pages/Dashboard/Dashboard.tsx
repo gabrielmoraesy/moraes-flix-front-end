@@ -1,7 +1,7 @@
-import { LoaderCircle } from "lucide-react";
 import useDashboard from "./Dashboard.hook";
 import MyMoviesDashboard from "./fragments/MyMoviesDashboard/MyMoviesDashboard";
 import MyReviewsDashboard from "./fragments/MyReviewsDashboard/MyReviewsDashboard";
+import SkeletonDashboard from "./fragments/SkeletonDashboard/SkeletonDashboard";
 
 export const Dashboard = () => {
   const {
@@ -33,30 +33,34 @@ export const Dashboard = () => {
         {renderButtonsTable("myMovies")}
       </div>
 
-      {loading && <p className="text-lg my-1 mx-2 animate-spin"><LoaderCircle /></p>}
+      {!loading &&
+        <MyMoviesDashboard
+          myMovies={myMovies}
+          myMoviesIsOpen={myMoviesIsOpen}
+          showDeleteMovieModal={showDeleteMovieModal}
+          setShowDeleteMovieModal={setShowDeleteMovieModal}
+          handleDeleteMovie={handleDeleteMovie}
+        />
+      }
 
-      <MyMoviesDashboard
-        myMovies={myMovies}
-        myMoviesIsOpen={myMoviesIsOpen}
-        showDeleteMovieModal={showDeleteMovieModal}
-        setShowDeleteMovieModal={setShowDeleteMovieModal}
-        handleDeleteMovie={handleDeleteMovie}
-      />
+      {loading && <SkeletonDashboard />}
 
       <div className="flex justify-center items-center gap-2 mt-6 text-lg">
         Suas avaliações
         {renderButtonsTable("myReviews")}
       </div>
 
-      {loading && <p className="text-lg my-1 mx-2 animate-spin"><LoaderCircle /></p>}
+      {!loading &&
+        <MyReviewsDashboard
+          myReviews={myReviews}
+          myReviewsIsOpen={myReviewsIsOpen}
+          showDeleteReviewModal={showDeleteReviewModal}
+          setShowDeleteReviewModal={setShowDeleteReviewModal}
+          handleDeleteReview={handleDeleteReview}
+        />
+      }
 
-      <MyReviewsDashboard
-        myReviews={myReviews}
-        myReviewsIsOpen={myReviewsIsOpen}
-        showDeleteReviewModal={showDeleteReviewModal}
-        setShowDeleteReviewModal={setShowDeleteReviewModal}
-        handleDeleteReview={handleDeleteReview}
-      />
+      {loading && <SkeletonDashboard />}
     </div>
   );
 };
