@@ -50,7 +50,7 @@ const MoviesHome = ({ filteredMovies, sortedMoviesByRating, calculateAverageRevi
                             <p className="text-xs">{movie.releaseYear} | {movie.duration}min | {movie.genre}</p>
                             <div className="flex gap-2 items-center">
                                 <p className="flex">{renderStars(calculateAverageReview(movie))}</p>
-                                <p className="text-sm">{calculateAverageReview(movie)}</p>
+                                <p className="text-sm">{calculateAverageReview(movie).toFixed(1)}</p>
                             </div>
                         </div>
 
