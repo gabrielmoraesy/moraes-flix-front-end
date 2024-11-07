@@ -1,8 +1,8 @@
 <p align="center">
-  <a target="blank">MoraesFlix</a>
+  <h1>MoraesFlix</h1>
 </p>
 
-## Descrição
+## Description
 
 O MoraesFlix é uma aplicação de gerenciamento de filmes, permitindo que os usuários adicionem, editem e excluam seus filmes favoritos, além de deixarem avaliações. O projeto foi desenvolvido com tecnologias modernas:
 
@@ -33,7 +33,7 @@ O MoraesFlix é uma aplicação de gerenciamento de filmes, permitindo que os us
 
 Com uma interface amigável, o MoraesFlix facilita a gestão de suas coleções de filmes e avaliações.
 
-## Instalação
+## Installation
 
 ```bash
 $ npm install
