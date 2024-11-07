@@ -39,6 +39,12 @@ Com uma interface amigável, o MoraesFlix facilita a gestão de suas coleções 
 $ npm install
 ```
 
+## Create .env file and paste paste inside it
+
+```bash
+$ VITE_BACKEND_URL=http://localhost:3333
+```
+
 ## Running the app
 
 ```bash
