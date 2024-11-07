@@ -9,10 +9,11 @@ import { ThemeProvider } from "./contexts/ThemeProvider/theme-provider";
 import { useAuth } from "./contexts/AuthContext/authContext";
 import { Auth } from "./pages/Auth";
 import { CreateMovie } from "./pages/CreateMovie/CreateMovie";
-import { Dashboard } from "./pages/Dashboard";
-import { MovieDetails } from "./pages/MovieDetails";
 import { MyAccount } from "./pages/MyAccount";
+import { EditMovie } from "./pages/EditMovie/EditMovie";
+import { Dashboard } from "./pages/Dashboard";
 import { About } from "./pages/About";
+import { MovieDetails } from "./pages/MovieDetails";
 
 
 function App() {
@@ -46,10 +47,10 @@ function App() {
               path="/movies/create"
               element={token ? <CreateMovie /> : <Navigate to="/" />}
             />
-            {/* <Route
-              path="/projects/edit/:id"
-              element={user ? <EditProject /> : <Navigate to="/" />}
-            /> */}
+            <Route
+              path="/movies/edit/:id"
+              element={token ? <EditMovie /> : <Navigate to="/" />}
+            />
             <Route
               path="/movies/:id"
               element={token ? <MovieDetails /> : <Navigate to="/" />}

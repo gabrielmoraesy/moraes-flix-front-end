@@ -1,4 +1,4 @@
-import CreateMovieForm from "@/components/Form/CreateMovieForm/CreateMovieForm";
+import CreateOrEditMovieForm from "@/components/Form/CreateOrEditMovieForm/CreateOrEditMovieForm";
 
 export const CreateMovie = () => {
     return (
@@ -9,7 +9,7 @@ export const CreateMovie = () => {
                     Crie seu filme agora mesmo e exiba ele para o público
                 </p>
 
-                <CreateMovieForm />
+                <CreateOrEditMovieForm variant="create" />
             </div>
         </div>
     );

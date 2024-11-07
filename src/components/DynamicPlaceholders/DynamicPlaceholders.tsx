@@ -8,11 +8,7 @@ interface IDynamicPlaceholders {
 export const DynamicPlaceholders = ({ movies = [] }: IDynamicPlaceholders) => {
   const arrayTitleMovies = movies.map((movie: IMovie) => movie.title);
 
-  const sequence = arrayTitleMovies.length > 0
-    ? arrayTitleMovies.flatMap((item: string, index: number) => {
-      return index === arrayTitleMovies.length - 1 ? [item] : [item, 1500];
-    })
-    : [];
+  const sequence = arrayTitleMovies.flatMap((title) => [title, 1500]);
 
   const finalSequence = sequence.length > 0 ? sequence : ["Pesquise pelo nome do filme...", 1500];
 

@@ -9,12 +9,13 @@ import { cn } from "@/utils/cn";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronsUpDown } from "lucide-react";
 import { Check } from "phosphor-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import toast from 'react-hot-toast'
-import { useNavigate } from "react-router-dom";
-import { API_INSTANCE } from "@/services/api";
+import { useNavigate, useParams } from "react-router-dom";
+import { api } from "@/services/api";
+import { IMovie } from "@/interfaces/IMovie";
 
 interface IMoviesGenres {
     value: string
@@ -36,46 +37,51 @@ const movieGenres: IMoviesGenres[] = [
 
 const currentYear = new Date().getFullYear();
 
-const createMovieSchema = z.object({
+const createOrEditMovieSchema = z.object({
     title: z.string()
         .nonempty("Título é obrigatório")
         .max(200, "Título não pode ter mais de 200 caracteres"),
     description: z.string()
         .nonempty("Descrição é obrigatória")
         .max(1000, "Descrição não pode ter mais de 1000 caracteres"),
-    releaseYear: z.string()
-        .transform((value) => parseInt(value, 10))
+    releaseYear: z.union([z.string(), z.number()])
+        .transform((value) => typeof value === "string" ? parseInt(value, 10) : value)
         .refine((value) => !isNaN(value) && value <= currentYear, {
             message: `Ano não pode ser maior que ${currentYear}`,
         }),
-    duration: z.string()
-        .transform((value) => parseInt(value, 10))
+    duration: z.union([z.string(), z.number()])
+        .transform((value) => typeof value === "string" ? parseInt(value, 10) : value)
         .refine((value) => !isNaN(value) && value > 0 && value <= 999, {
             message: "Duração é obrigatória e deve estar entre 1 e 999 minutos",
         }),
 });
 
+type CreateOrEditMovieFormInputs = z.infer<typeof createOrEditMovieSchema>;
 
-type CreateMovieFormInputs = z.infer<typeof createMovieSchema>;
+interface CreateOrEditMovieFormProps {
+    variant: "create" | "edit"
+}
 
-const CreateMovieForm = () => {
+const CreateOrEditMovieForm = ({ variant }: CreateOrEditMovieFormProps) => {
     const navigate = useNavigate()
+    const { id } = useParams()
     const { user } = useAuth();
-    const { register, handleSubmit, formState: { errors } } = useForm<CreateMovieFormInputs>({
-        resolver: zodResolver(createMovieSchema),
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm<CreateOrEditMovieFormInputs>({
+        resolver: zodResolver(createOrEditMovieSchema),
     });
     const [open, setOpen] = useState(false);
     const [genreSelected, setGenreSelected] = useState("");
+    const [movieSelectedForEdit, setMovieSelectedForEdit] = useState<IMovie>()
     const currentYear = new Date().getFullYear();
 
-    const handleCreateMovie = async (data: CreateMovieFormInputs) => {
+    const handleCreateMovie = async (data: CreateOrEditMovieFormInputs) => {
         if (!genreSelected) {
             toast.error("Selecione um gênero")
             return
         }
 
         try {
-            await API_INSTANCE.post("/movies", {
+            await api.post("/movies", {
                 title: data.title,
                 description: data.description,
                 genre: genreSelected,
@@ -91,8 +97,61 @@ const CreateMovieForm = () => {
         }
     };
 
+    const handleEditMovie = async (data: CreateOrEditMovieFormInputs) => {
+        try {
+            await api.patch(`/movies/${id}`, {
+                title: data.title,
+                description: data.description,
+                genre: genreSelected,
+                releaseYear: data.releaseYear,
+                duration: data.duration,
+            });
+
+            toast.success("Filme editado com sucesso");
+            navigate('/dashboard')
+        } catch (error) {
+            toast.error(`Ocorreu um erro ao editar seu filme: ${error}`);
+        }
+    };
+
+    const fetchMovieAndVerifyOwnership = async () => {
+        try {
+            if (variant === "edit" && id) {
+                const response = await api.get(`/movies/${id}`);
+                setMovieSelectedForEdit(response.data);
+
+                if (user?.id !== response.data.userId) {
+                    toast.error("Você só pode editar filmes que você criou");
+                    navigate("/");
+                }
+            }
+        } catch (error) {
+            toast.error(`Erro ao carregar o filme: ${error}`);
+            navigate("/");
+        }
+    };
+
+    useEffect(() => {
+        fetchMovieAndVerifyOwnership();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if (variant === "edit" && movieSelectedForEdit) {
+            setValue("title", movieSelectedForEdit.title);
+            setValue("description", movieSelectedForEdit.description);
+            setValue("releaseYear", Number(movieSelectedForEdit.releaseYear));
+            setValue("duration", Number(movieSelectedForEdit.duration));
+            setGenreSelected(movieSelectedForEdit.genre);
+        }
+    }, [movieSelectedForEdit, variant, setValue]);
+
+
     return (
-        <form onSubmit={handleSubmit(handleCreateMovie)} className="flex flex-col items-center gap-4">
+        <form
+            onSubmit={handleSubmit(variant === 'create' ? handleCreateMovie : handleEditMovie)}
+            className="flex flex-col items-center gap-4"
+        >
             <div className="flex flex-col gap-2 w-[100%]">
                 <Input
                     type="text"
@@ -192,10 +251,10 @@ const CreateMovieForm = () => {
                 type="submit"
                 className="w-full bg-primaryBlue p-2 rounded-lg text-white dark:hover:text-black duration-200"
             >
-                Criar filme
+                {variant === "create" ? "Criar filme" : "Editar filme"}
             </Button>
         </form>
     )
 }
 
-export default CreateMovieForm;
+export default CreateOrEditMovieForm;

@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext/authContext";
 import { IMovie } from "@/interfaces/IMovie";
 import { IReview } from "@/interfaces/IReview";
-import { API_INSTANCE } from "@/services/api";
+import { api } from "@/services/api";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
@@ -13,11 +13,14 @@ const UseMovieDetails = () => {
     const [movie, setMovie] = useState<IMovie | null>(null);
     const [showCreateReviewModal, setShowCreateReviewModal] = useState(false)
     const [showEditReviewModal, setShowEditReviewModal] = useState(false);
+    const [myReviewsIsOpen, setMyReviewsIsOpen] = useState(true);
+    const [showDeleteReviewModal, setShowDeleteReviewModal] = useState(false);
+
 
     const getMovieById = async () => {
         try {
             setLoading(true);
-            const response = await API_INSTANCE.get(`movies/${id}`);
+            const response = await api.get(`movies/${id}`);
             setMovie(response.data);
         } catch (error) {
             toast.error(`Erro ao buscar filmes: ${error}`);
@@ -44,6 +47,8 @@ const UseMovieDetails = () => {
         return starCounts;
     };
 
+    const starCounts = starsPerReview(movie?.reviews || []);
+
     const handleDeleteReview = async (reviewId: string) => {
         try {
             if (movie) {
@@ -55,7 +60,7 @@ const UseMovieDetails = () => {
                 });
             }
 
-            await API_INSTANCE.delete(`/reviews/${reviewId}`);
+            await api.delete(`/reviews/${reviewId}`);
 
             toast.success("Avaliação deletada com sucesso");
         } catch (error) {
@@ -79,7 +84,24 @@ const UseMovieDetails = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showCreateReviewModal, showEditReviewModal]);
 
-    return { movie, setMovie, loading, handleDeleteReview, quantityReviews, totalReviews, averageReview, formattedAverageReview, starsPerReview, checkUserReview, showCreateReviewModal, setShowCreateReviewModal, showEditReviewModal, setShowEditReviewModal };
+    return {
+        movie,
+        loading,
+        handleDeleteReview,
+        quantityReviews,
+        formattedAverageReview,
+        starsPerReview,
+        checkUserReview,
+        showCreateReviewModal,
+        setShowCreateReviewModal,
+        showEditReviewModal,
+        setShowEditReviewModal,
+        myReviewsIsOpen,
+        setMyReviewsIsOpen,
+        showDeleteReviewModal,
+        setShowDeleteReviewModal,
+        starCounts
+    };
 }
 
 export default UseMovieDetails;

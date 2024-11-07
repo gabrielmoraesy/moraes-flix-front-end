@@ -1,4 +1,4 @@
-import { API_INSTANCE } from '@/services/api';
+import { api } from '@/services/api';
 import { AxiosError } from 'axios';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
 
     const register = async (userData: IUserRegister) => {
         try {
-            await API_INSTANCE.post("/auth/register", {
+            await api.post("/auth/register", {
                 name: userData.name,
                 email: userData.email,
                 password: userData.password
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
 
     const login = async (userData: IUserLogin) => {
         try {
-            const res = await API_INSTANCE.post("/auth/login", {
+            const res = await api.post("/auth/login", {
                 email: userData.email,
                 password: userData.password
             });

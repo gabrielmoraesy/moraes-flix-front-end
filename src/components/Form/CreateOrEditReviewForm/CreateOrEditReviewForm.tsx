@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext/authContext";
 import { IMovie } from "@/interfaces/IMovie";
-import { API_INSTANCE } from "@/services/api";
+import { api } from "@/services/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Star } from "phosphor-react";
 import { useEffect, useState } from "react";
@@ -64,7 +64,7 @@ const CreateOrEditReviewForm = ({ movie, setOpen, variant }: CreateReviewFormPro
 
     const handleCreateReview = async (data: CreateReviewFormInputs) => {
         try {
-            await API_INSTANCE.post(`/reviews/${user!.id}/${movie.id}`, {
+            await api.post(`/reviews/${user!.id}/${movie.id}`, {
                 rating: Number(data.rating),
                 comment: data.comment || ""
             });
@@ -81,7 +81,7 @@ const CreateOrEditReviewForm = ({ movie, setOpen, variant }: CreateReviewFormPro
 
     const handleEditReview = async (data: CreateReviewFormInputs) => {
         try {
-            await API_INSTANCE.patch(`/reviews/${reviewUser?.id}`, {
+            await api.patch(`/reviews/${reviewUser?.id}`, {
                 rating: Number(data.rating),
                 comment: data.comment || ""
             });
@@ -110,7 +110,7 @@ const CreateOrEditReviewForm = ({ movie, setOpen, variant }: CreateReviewFormPro
 
             <textarea
                 placeholder="Digite seu comentário..."
-                className="p-2 border border-gray-300 rounded w-full dark:text-white min-h-[100px] max-h-[300px]"
+                className="p-2 border border-gray-300 rounded w-full dark:text-black min-h-[100px] max-h-[300px]"
                 {...register("comment")}
                 maxLength={500}
             />
